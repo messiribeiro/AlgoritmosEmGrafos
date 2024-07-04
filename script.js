@@ -162,49 +162,49 @@ function matrixCreate(file) {
 }
 
 
+//gerar um grafo aleatório
+
+document.querySelector(".random").addEventListener("click", () => {
+  const adjMatrix = generateRandomAdjMatrix(4, 8);
+  console.log(adjMatrix);
+
+  renderGraph(adjMatrix, '.renderGraph');
+  renderGraph(kruskal(adjMatrix), '.renderKruskal');
+  renderGraph(prim(adjMatrix), '.renderPrim');
+  showResult();
+});
+
 
 // Função para renderizar o grafo usando vis.js
-function renderGraph(adjacencyMatrix) {
-  // Criando um grafo vazio (usando a biblioteca vis.js)
-  const container = document.querySelector('.renderGraph');
+function renderGraph(adjacencyMatrix, containerSelector) {
+  const container = document.querySelector(containerSelector);
   const nodes = new vis.DataSet();
   const edges = new vis.DataSet();
 
-  // Adicionando vértices ao grafo
   for (let i = 0; i < adjacencyMatrix.length; i++) {
-    nodes.add({ id: i + 1 , label: `v${i+1}`,});
+      nodes.add({ id: i + 1, label: `v${i + 1}` });
   }
 
-  // Adicionando arestas com pesos
   for (let i = 0; i < adjacencyMatrix.length; i++) {
-    for (let j = i + 1; j < adjacencyMatrix.length; j++) {
-      if (adjacencyMatrix[i][j] !== 0) {
-        edges.add({
-          from: i + 1,
-          to: j + 1,
-          label: String(adjacencyMatrix[i][j])
-        });
+      for (let j = i + 1; j < adjacencyMatrix.length; j++) {
+          if (adjacencyMatrix[i][j] !== 0) {
+              edges.add({
+                  from: i + 1,
+                  to: j + 1,
+                  label: String(adjacencyMatrix[i][j])
+              });
+          }
       }
-    }
   }
 
-  // Configurações do grafo
-  const data = {
-    nodes: nodes,
-    edges: edges
-  };
+  const data = { nodes, edges };
   const options = {
-    layout: {
-      randomSeed: 2, // Semente aleatória para layout estático
-    },
-    physics: {
-      enabled: false // Desabilita a física para posicionar nós manualmente
-    }
+      layout: { randomSeed: 2 },
+      physics: { enabled: false },
+      edges: { smooth: false }
   };
-  
 
-  // Renderizando o grafo
-  const network = new vis.Network(container, data, options);
+  new vis.Network(container, data, options);
 }
 
 function renderKruskal(adjacencyMatrix) {
@@ -238,11 +238,14 @@ function renderKruskal(adjacencyMatrix) {
   };
   const options = {
     layout: {
-      randomSeed: 2, // Semente aleatória para layout estático
+      randomSeed: 2, 
     },
     physics: {
-      enabled: false // Desabilita a física para posicionar nós manualmente
-    }
+      enabled: false 
+    },
+      edges: {
+        smooth: false,
+      }
   };
   
 
@@ -285,6 +288,9 @@ function renderPrim(adjacencyMatrix) {
     },
     physics: {
       enabled: false // Desabilita a física para posicionar nós manualmente
+    },
+    edges: {
+      smooth: false
     }
   };
   
@@ -294,10 +300,12 @@ function renderPrim(adjacencyMatrix) {
 }
 
 
+const resultSection = document.querySelector('.result');
+const generateSection = document.querySelector('.generate');
+
 //essa função altera entre as sections
 function showResult() {
-  const resultSection = document.querySelector('.result');
-  const generateSection = document.querySelector('.generate');
+  
   resultSection.classList.remove('display-none');
   generateSection.classList.add('display-none');
 
@@ -312,3 +320,37 @@ newGraph.addEventListener("click", ()=> {
   generateSection.classList.remove('display-none');
 })
 
+
+//gerar matriz aleatoriamente
+function generateRandomAdjMatrix(minVertices, maxVertices) {
+  const n = Math.floor(Math.random() * (maxVertices - minVertices + 1)) + minVertices;
+  const adjMatrix = Array.from({ length: n }, () => Array(n).fill(0));
+  let edgeCount = 0;
+
+  for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+          if (Math.random() < 0.5) { // 50% chance de haver uma aresta entre i e j
+              const weight = Math.floor(Math.random() * 10) + 1; // Pesos entre 1 e 10
+              adjMatrix[i][j] = weight;
+              adjMatrix[j][i] = weight;
+              edgeCount++;
+          }
+      }
+  }
+
+  // Garantir que há pelo menos n-1 arestas
+  while (edgeCount < n - 1) {
+      const i = Math.floor(Math.random() * n);
+      let j;
+      do {
+          j = Math.floor(Math.random() * n);
+      } while (i === j || adjMatrix[i][j] !== 0);
+
+      const weight = Math.floor(Math.random() * 10) + 1; // Pesos entre 1 e 10
+      adjMatrix[i][j] = weight;
+      adjMatrix[j][i] = weight;
+      edgeCount++;
+  }
+
+  return adjMatrix;
+}

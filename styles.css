@@ -149,7 +149,7 @@ section.generate button:hover {
   height: 400px;
 }
 
-.renderTree, .renderPrim, .renderKruskal, .generatedGraph{
+.renderTree, .renderPrim, .renderKruskal, .renderGraph{
   width:400px;
   height: 400px;
 }
@@ -201,4 +201,12 @@ section.generate button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+h2 {
+  font-size: 1.3em;
+}
+
+h1 {
+  font-size: 2em;
 }
