@@ -158,7 +158,7 @@ function matrixCreate(file) {
 //gerar um grafo aleatório
 
 document.querySelector(".random").addEventListener("click", () => {
-  const adjMatrix = generateRandomAdjMatrix(4, 8);
+  const adjMatrix = generateRandomAdjMatrix(6, 15);
   console.log(adjMatrix);
 
   renderGraph(adjMatrix, '.renderGraph');
