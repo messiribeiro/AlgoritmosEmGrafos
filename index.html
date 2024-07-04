@@ -8,14 +8,46 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/vis-network/styles/vis-network.min.css" rel="stylesheet" type="text/css" />
-  <title>Document</title>
+  
+  <title>Teoria dos Grafos</title>
 </head>
 <body>
   <header>
-    <h1>Busca em Largura</h1>
+    
   </header>
   <main>
-    <div id="mynetwork" style="width: 800px; height: 600px; border: 1px solid lightgray;"></div>
+    <h1>Arvore Geradora</h1>
+    <section class="generate">
+      <div class="drag-and-drop">
+        <img class="upload-svg" src="./assets/upload (1).svg" alt="" srcset="">
+        <p>clique ou arraste para importar sua matriz</p>
+        <input type="file" id="file-input" style="display: none;">
+      </div>
+      <p>ou</p>
+      <button class="random">
+        Gere um Grafo Aleatório
+      </button>
+
+    </section>
+    
+    <section class="result display-none"  >
+      <div class="graphs">
+        <div class="generatedGraph">
+          <h2>Grafo Gerado</h2>
+          <div class="renderGraph"></div>
+        </div>
+        <div class="generatedGraph">
+          <h2>Árvore Gerada(Kruskal)</h2>
+          <div class="renderKruskal"></div>
+        </div>
+        <div class="generatedGraph">
+          <h2>Árvore Gerada(Prim)</h2>
+          <div class="renderPrim"></div>
+        </div>
+
+      </div>
+      <button class="newGraph" >Importar outro Grafo</button>
+    </section>
   </main>
   <footer>
   </footer>
