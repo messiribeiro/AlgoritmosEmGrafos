@@ -34,6 +34,35 @@ droparea.addEventListener("drop", (e) => {
   }
 });
 
+class UnionFind {
+  constructor(size) {
+    this.parent = Array.from({ length: size }, (_, index) => index);
+    this.rank = Array(size).fill(0);
+  }
+
+  find(x) {
+    if (this.parent[x] !== x) {
+      this.parent[x] = this.find(this.parent[x]); // Caminho comprimido
+    }
+    return this.parent[x];
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+
+    if (rootX !== rootY) {
+      if (this.rank[rootX] > this.rank[rootY]) {
+        this.parent[rootY] = rootX;
+      } else if (this.rank[rootX] < this.rank[rootY]) {
+        this.parent[rootX] = rootY;
+      } else {
+        this.parent[rootY] = rootX;
+        this.rank[rootX] += 1;
+      }
+    }
+  }
+}
 
 function kruskal(adjMatrix) {
   const n = adjMatrix.length;
@@ -43,29 +72,27 @@ function kruskal(adjMatrix) {
 
   // Constrói uma lista de arestas a partir da matriz de adjacência
   for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-          if (adjMatrix[i][j] !== 0) {
-              edges.push({ u: i, v: j, weight: adjMatrix[i][j] });
-          }
+    for (let j = i + 1; j < n; j++) {
+      if (adjMatrix[i][j] !== 0) {
+        edges.push({ u: i, v: j, weight: adjMatrix[i][j] });
       }
+    }
   }
 
   // Ordena as arestas pelo peso
   edges.sort((a, b) => a.weight - b.weight);
 
-  
+  const uf = new UnionFind(n);
 
-  
   for (const edge of edges) {
-      const { u, v, weight } = edge;
-
-      // Verifica se adicionar a aresta não forma um ciclo
-      if (!formsCycle(newMatrix, u, v)) {
-          newMatrix[u][v] = weight;
-          newMatrix[v][u] = weight;
-          edgeCount++;
-          if (edgeCount === n - 1) break; // Termina quando a MST tem n-1 arestas
-      }
+    const { u, v, weight } = edge;
+    if (uf.find(u) !== uf.find(v)) {
+      uf.union(u, v);
+      newMatrix[u][v] = weight;
+      newMatrix[v][u] = weight;
+      edgeCount++;
+      if (edgeCount === n - 1) break; // Termina quando a MST tem n-1 arestas
+    }
   }
 
   return newMatrix;
