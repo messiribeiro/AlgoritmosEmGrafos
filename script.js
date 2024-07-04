@@ -37,53 +37,30 @@ droparea.addEventListener("drop", (e) => {
 
 function kruskal(adjMatrix) {
   const n = adjMatrix.length;
+  const newMatrix = Array.from({ length: n }, () => Array(n).fill(0));
   const edges = [];
+  let edgeCount = 0;
 
   // Constrói uma lista de arestas a partir da matriz de adjacência
   for (let i = 0; i < n; i++) {
       for (let j = i + 1; j < n; j++) {
           if (adjMatrix[i][j] !== 0) {
-              edges.push([i, j, adjMatrix[i][j]]);
+              edges.push({ u: i, v: j, weight: adjMatrix[i][j] });
           }
       }
   }
 
   // Ordena as arestas pelo peso
-  edges.sort((a, b) => a[2] - b[2]);
+  edges.sort((a, b) => a.weight - b.weight);
 
-  // Inicializa a estrutura Union-Find
-  const parent = Array.from({ length: n }, (_, i) => i);
-  const rank = Array(n).fill(0);
+  
 
-  function find(x) {
-      if (parent[x] !== x) {
-          parent[x] = find(parent[x]);
-      }
-      return parent[x];
-  }
+  
+  for (const edge of edges) {
+      const { u, v, weight } = edge;
 
-  function union(x, y) {
-      const rootX = find(x);
-      const rootY = find(y);
-      if (rootX !== rootY) {
-          if (rank[rootX] > rank[rootY]) {
-              parent[rootY] = rootX;
-          } else if (rank[rootX] < rank[rootY]) {
-              parent[rootX] = rootY;
-          } else {
-              parent[rootY] = rootX;
-              rank[rootX]++;
-          }
-      }
-  }
-
-  const newMatrix = Array.from({ length: n }, () => Array(n).fill(0));
-  let edgeCount = 0;
-
-  // Aplica o algoritmo de Kruskal
-  for (const [u, v, weight] of edges) {
-      if (find(u) !== find(v)) {
-          union(u, v);
+      // Verifica se adicionar a aresta não forma um ciclo
+      if (!formsCycle(newMatrix, u, v)) {
           newMatrix[u][v] = weight;
           newMatrix[v][u] = weight;
           edgeCount++;
@@ -94,7 +71,23 @@ function kruskal(adjMatrix) {
   return newMatrix;
 }
 
+function formsCycle(newMatrix, u, v) {
+  const visited = new Set();
+  const dfs = (current) => {
+    visited.add(current);
+    for (let neighbor = 0; neighbor < newMatrix.length; neighbor++) {
+      if (newMatrix[current][neighbor] !== 0 && !visited.has(neighbor)) {
+        dfs(neighbor);
+      }
+    }
+  };
+
+  dfs(u);
+  return visited.has(v); // Verifica se v está no conjunto de visitados
+}
+
 function prim(adjMatrix) {
+
   const n = adjMatrix.length;
   const selected = Array(n).fill(false);
   const newMatrix = Array.from({ length: n }, () => Array(n).fill(0));
